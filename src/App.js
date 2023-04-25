@@ -17,18 +17,28 @@ function App() {
     }
   ]);
 
+  const [rowEdit,setRowEdit] = useState(null)
+  const handleEdit = (idx)=>{
+    setRowEdit(idx);
+    setModelOpen(true);
+  }
+
   const handleDelete = (value)=>{
     setRows(rows.filter((_,idx) => idx !== value))
   }
 
   const handleSubmitFun = (value)=>{
-    setRows([...rows,value])
+    rowEdit ===null ? 
+    setRows([...rows,value]):setRows(rows.map((currRow, idx)=>{
+      if(idx !== rowEdit) return currRow;
+      return value;
+    }))
   }
   return (
     <div className="App"> 
-    <Table rows={rows} deleteRow={handleDelete} />
+    <Table rows={rows} deleteRow={handleDelete} editRow={handleEdit}/>
     <button className='btn' onClick={()=>{setModelOpen(true)}}>Add</button>
-    {modelOpen &&<Modal closeModel={()=>{setModelOpen(false)}} onSubmit={handleSubmitFun}/>}
+    {modelOpen &&<Modal closeModel={()=>{setModelOpen(false); setRowEdit(null)}} onSubmit={handleSubmitFun} defaultValue={rowEdit !== null && rows[rowEdit]}/>}
     </div>
   );
 }
